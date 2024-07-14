@@ -26,7 +26,7 @@ class Shipment(
 
     @Override
     override fun notifyObservers() {
-        observers.forEach { it.notify() }
+        observers.forEach { it.notify(1) }
     }
 
     fun addNote(note: String) {

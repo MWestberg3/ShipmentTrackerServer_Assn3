@@ -1,3 +1,3 @@
 interface ShipmentObserver {
-    fun notify()
+    fun notify(temp: Int)
 }
