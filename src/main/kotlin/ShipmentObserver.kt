@@ -1,3 +1,3 @@
 interface ShipmentObserver {
-    fun notify(temp: Int)
+    fun notify(newStatus: String, timestamp: Long)
 }
