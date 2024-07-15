@@ -26,7 +26,7 @@ class Shipment(
 
     @Override
     override fun notifyObservers() {
-        observers.forEach { it.notify(1) }
+        observers.forEach { it.notify(status, expectedDeliveryDate) }
     }
 
     fun addNote(note: String) {
