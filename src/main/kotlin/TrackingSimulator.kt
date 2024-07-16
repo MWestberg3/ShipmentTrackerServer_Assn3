@@ -2,6 +2,7 @@ import ShippingEvents.ShippingEvent
 import ShippingEvents.ShippingEventType
 import Strategies.*
 import kotlinx.coroutines.delay
+import java.io.File
 
 class TrackingSimulator {
     private var shipments: MutableList<Shipment> = mutableListOf()
@@ -28,7 +29,26 @@ class TrackingSimulator {
             ShippingEventType.SHIPPED -> ShippedStrategy()
         }
     }
+    fun loadShipmentData() {
+        val filepath = "/Users/mwestberg/IdeaProjects/test.txt"
+        val shippingEvents = mutableListOf<ShippingEvent>()
+
+        File(filepath).forEachLine { line ->
+            val parts = line.split(",")
+            val statusString = parts[0]
+            val status = ShippingEventType.from(statusString)
+            val id = parts[1]
+            val timestamp = parts[2].toLong()
+            val otherInfo = if (parts.size > 3) parts[3] else null
+
+            shippingEvents.add(ShippingEvent(status, id, timestamp, otherInfo))
+        }
+
+        setEvents(shippingEvents)
+    }
+
     suspend fun runSimulation() {
+        loadShipmentData()
         events.forEach { event ->
             var shipment = findShipmentById(event.shipmentID)
             var isNewShipment = false

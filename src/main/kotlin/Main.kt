@@ -16,7 +16,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
 import kotlinx.coroutines.launch
-import java.io.File
 
 @Composable
 @Preview
@@ -127,32 +126,12 @@ fun formatNotesUpdates(trackerViewHelper: TrackerViewHelper): String {
     }
 }
 
-
-fun loadShipmentData(): MutableList<ShippingEvent> {
-    val filepath = "/Users/mwestberg/IdeaProjects/test.txt"
-    val shippingEvents = mutableListOf<ShippingEvent>()
-
-    File(filepath).forEachLine { line ->
-        val parts = line.split(",")
-        val statusString = parts[0]
-        val status = ShippingEventType.from(statusString)
-        val id = parts[1]
-        val timestamp = parts[2].toLong()
-        val otherInfo = if (parts.size > 3) parts[3] else null
-
-        shippingEvents.add(ShippingEvent(status, id, timestamp, otherInfo))
-    }
-
-    return shippingEvents
-}
-
 fun main() = application {
     Window(onCloseRequest = ::exitApplication) {
         val trackingSimulator = TrackingSimulator()
         val coroutineScope = rememberCoroutineScope()
 
         coroutineScope.launch {
-            trackingSimulator.setEvents(loadShipmentData())
             trackingSimulator.runSimulation()
         }
         App(trackingSimulator)
