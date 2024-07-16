@@ -22,4 +22,17 @@ enum class ShippingEventType {
             else -> throw IllegalArgumentException("Invalid status")
         }
     }
+
+    override fun toString(): String {
+        return when (this) {
+            CREATED -> "Created"
+            SHIPPED -> "Shipped"
+            LOCATION -> "Location"
+            DELIVERED -> "Delivered"
+            DELAYED -> "Delayed"
+            LOST -> "Lost"
+            NOTE_ADDED -> "Note Added"
+            CANCELLED -> "Cancelled"
+        }
+    }
 }
