@@ -1,6 +1,6 @@
-import shippingEvents.ShippingEvent
-import shippingEvents.ShippingEventType
-import strategies.*
+import ShippingEvents.ShippingEvent
+import ShippingEvents.ShippingEventType
+import Strategies.*
 import kotlinx.coroutines.delay
 
 class TrackingSimulator {
@@ -39,10 +39,10 @@ class TrackingSimulator {
                 addShipment(shipment)
                 isNewShipment = true
             }
-            strategy.processUpdate(shipment, event)
             if (!isNewShipment) {
-                delay(1000L)
+                delay(500L)
             }
+            strategy.processUpdate(shipment, event)
         }
     }
 }

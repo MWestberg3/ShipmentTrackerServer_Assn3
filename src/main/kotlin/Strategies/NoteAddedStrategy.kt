@@ -1,7 +1,7 @@
-package strategies
+package Strategies
 
 import Shipment
-import shippingEvents.ShippingEvent
+import ShippingEvents.ShippingEvent
 import UpdateStrategy
 
 class NoteAddedStrategy : UpdateStrategy {

@@ -1,4 +1,4 @@
-import shippingEvents.ShippingEventType
+import ShippingEvents.ShippingEventType
 
 class Shipment(
     var id: String,
@@ -9,7 +9,7 @@ class Shipment(
     var notes: MutableList<String> = mutableListOf()
         private set
     var expectedDeliveryDate: Long? = null
-    var currentLocation: String? = null
+    var currentLocation: String = "unknown"
     var observers: MutableList<ShipmentObserver> = mutableListOf()
 
     // add a timestamp
