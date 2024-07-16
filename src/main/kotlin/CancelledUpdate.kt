@@ -1,6 +1,6 @@
 class CancelledUpdate : UpdateStrategy {
-    override fun processUpdate(shipment: Shipment) {
-        val update = ShippingUpdate(shipment.shippingUpdateHistory.lastOrNull()?.newStatus, shipment.status, shipment.timestamp)
+    override fun processUpdate(shipment: Shipment, event: ShippingEvent) {
+        val update = ShippingUpdate(shipment.status, event.type, event.timestamp)
         shipment.addUpdate(update)
     }
 }

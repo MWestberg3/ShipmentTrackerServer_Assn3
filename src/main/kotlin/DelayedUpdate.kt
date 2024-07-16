@@ -1,7 +1,7 @@
 class DelayedUpdate : UpdateStrategy {
-    override fun processUpdate(shipment: Shipment) {
-        shipment.expectedDeliveryDate = shipment.otherInfo!!.toLong()
-        val update = ShippingUpdate(shipment.shippingUpdateHistory.lastOrNull()?.newStatus, shipment.status, shipment.timestamp)
+    override fun processUpdate(shipment: Shipment, event: ShippingEvent) {
+        shipment.expectedDeliveryDate = event.otherInfo!!.toLong()
+        val update = ShippingUpdate(shipment.status, event.type, event.timestamp)
         shipment.addUpdate(update)
     }
 }

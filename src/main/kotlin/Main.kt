@@ -12,15 +12,11 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
-import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import java.io.File
 
 @Composable
@@ -29,8 +25,8 @@ fun App() {
     val trackerViewHelper = remember { TrackerViewHelper() }
     val coroutineScope = rememberCoroutineScope()
     val trackingSimulator = TrackingSimulator()
-    val shipments = loadShipmentData()
-    shipments.forEach { trackingSimulator.addShipment(it) }
+    trackingSimulator.setEvents(loadShipmentData())
+    trackingSimulator.runSimulation()
     var shipmentIdInput by remember { mutableStateOf(TextFieldValue("")) }
     var searchResult by remember { mutableStateOf<String?>(null)}
 
@@ -67,21 +63,22 @@ fun App() {
     }
 }
 
-fun loadShipmentData(): MutableList<Shipment> {
+fun loadShipmentData(): MutableList<ShippingEvent> {
     val filepath = "/Users/mwestberg/IdeaProjects/test.txt"
-    val shipments = mutableListOf<Shipment>()
+    val shippingEvents = mutableListOf<ShippingEvent>()
 
     File(filepath).forEachLine { line ->
         val parts = line.split(",")
-        val status = parts[0]
+        val statusString = parts[0]
+        val status = ShippingEventType.from(statusString)
         val id = parts[1]
         val timestamp = parts[2].toLong()
         val otherInfo = if (parts.size > 3) parts[3] else null
 
-        shipments.add(Shipment(status, id, timestamp, otherInfo))
+        shippingEvents.add(ShippingEvent(status, id, timestamp, otherInfo))
     }
 
-    return shipments
+    return shippingEvents
 }
 
 fun main() = application {

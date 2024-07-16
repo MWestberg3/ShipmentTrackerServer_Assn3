@@ -1,41 +1,22 @@
 class Shipment(
-    var status: String,
     var id: String,
-    var timestamp: Long,
-    var otherInfo: String?)//: ShipmentSubject {
+)//: ShipmentSubject {
 {
-    private var shippingUpdate: UpdateStrategy = when (status) {
-        "created" -> CreatedUpdate()
-        "shipped" -> ShippedUpdate()
-        "location" -> LocationUpdate()
-        "delivered" -> DeliveredUpdate()
-        "delayed" -> DelayedUpdate()
-        "lost" -> LostUpdate()
-        "cancelled" -> CancelledUpdate()
-        "canceled" -> CancelledUpdate()
-        "noteadded" -> NoteAddedUpdate()
-        else -> throw IllegalArgumentException("Invalid status")
-    }
+    var status: ShippingEventType = ShippingEventType.CREATED
     var shippingUpdateHistory: MutableList<ShippingUpdate> = mutableListOf()
         private set
-
     var notes: MutableList<String> = mutableListOf()
         private set
-
     var expectedDeliveryDate: Long? = null
-
     var currentLocation: String? = null
 
-    init {
-        shippingUpdate.processUpdate(this)
-    }
-
+    // add a timestamp
     fun addNote(note: String) {
         notes.add(note)
     }
 
     fun addUpdate(update: ShippingUpdate) {
-        
+        this.status = update.newStatus
         shippingUpdateHistory.add(update)
 //        notifyObservers()
     }

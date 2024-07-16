@@ -1,3 +1,3 @@
 interface UpdateStrategy {
-    fun processUpdate(shipment: Shipment)
+    fun processUpdate(shipment: Shipment, event: ShippingEvent)
 }
