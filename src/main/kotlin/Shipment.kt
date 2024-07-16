@@ -1,7 +1,8 @@
+import ShippingEvents.ShippingEventType
+
 class Shipment(
     var id: String,
-)//: ShipmentSubject {
-{
+): ShipmentSubject {
     var status: ShippingEventType = ShippingEventType.CREATED
     var shippingUpdateHistory: MutableList<ShippingUpdate> = mutableListOf()
         private set
@@ -9,6 +10,7 @@ class Shipment(
         private set
     var expectedDeliveryDate: Long? = null
     var currentLocation: String? = null
+    var observers: MutableList<ShipmentObserver> = mutableListOf()
 
     // add a timestamp
     fun addNote(note: String) {
@@ -18,21 +20,21 @@ class Shipment(
     fun addUpdate(update: ShippingUpdate) {
         this.status = update.newStatus
         shippingUpdateHistory.add(update)
-//        notifyObservers()
+        notifyObservers()
     }
 
-//    @Override
-//    override fun registerObserver(observer: ShipmentObserver) {
-//        shippingUpdateHistory.add(observer)
-//    }
-//
-//    @Override
-//    override fun removeObserver(observer: ShipmentObserver) {
-//        shippingUpdateHistory.remove(observer)
-//    }
-//
-//    @Override
-//    override fun notifyObservers() {
-//        shippingUpdateHistory.forEach { it.notify(this) }
-//    }
+    @Override
+    override fun registerObserver(observer: ShipmentObserver) {
+        observers.add(observer)
+    }
+
+    @Override
+    override fun removeObserver(observer: ShipmentObserver) {
+        observers.remove(observer)
+    }
+
+    @Override
+    override fun notifyObservers() {
+        observers.forEach { it.notify(this) }
+    }
 }

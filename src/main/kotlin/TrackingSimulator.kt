@@ -1,3 +1,7 @@
+import ShippingEvents.ShippingEvent
+import ShippingEvents.ShippingEventType
+import Strategies.*
+
 class TrackingSimulator {
     private var shipments: MutableList<Shipment> = mutableListOf()
     private var events: MutableList<ShippingEvent> = mutableListOf()
@@ -13,14 +17,14 @@ class TrackingSimulator {
     }
     fun strategyPicker5000(eventType: ShippingEventType): UpdateStrategy {
         return when (eventType) {
-            ShippingEventType.CANCELLED -> CancelledUpdate()
-            ShippingEventType.CREATED -> CreatedUpdate()
-            ShippingEventType.DELAYED -> DelayedUpdate()
-            ShippingEventType.DELIVERED -> DeliveredUpdate()
-            ShippingEventType.LOCATION -> LocationUpdate()
-            ShippingEventType.LOST -> LostUpdate()
-            ShippingEventType.NOTE_ADDED -> NoteAddedUpdate()
-            ShippingEventType.SHIPPED -> ShippedUpdate()
+            ShippingEventType.CANCELLED -> CancelledStrategy()
+            ShippingEventType.CREATED -> CreatedStrategy()
+            ShippingEventType.DELAYED -> DelayedStrategy()
+            ShippingEventType.DELIVERED -> DeliveredStrategy()
+            ShippingEventType.LOCATION -> LocationStrategy()
+            ShippingEventType.LOST -> LostStrategy()
+            ShippingEventType.NOTE_ADDED -> NoteAddedStrategy()
+            ShippingEventType.SHIPPED -> ShippedStrategy()
         }
     }
     fun runSimulation() {
