@@ -75,10 +75,10 @@ fun loadShipmentData(): MutableList<Shipment> {
         val parts = line.split(",")
         val status = parts[0]
         val id = parts[1]
-        val expectedDeliveryDate = parts[2].toLong()
+        val timestamp = parts[2].toLong()
         val otherInfo = if (parts.size > 3) parts[3] else null
 
-        shipments.add(Shipment(status, id, expectedDeliveryDate, otherInfo))
+        shipments.add(Shipment(status, id, timestamp, otherInfo))
     }
 
     return shipments

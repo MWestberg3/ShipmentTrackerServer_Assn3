@@ -1,14 +1,25 @@
 class Shipment(
     var status: String,
     var id: String,
-    var expectedDeliveryDate: Long,
-    var otherInfo: String?)//: ShipmentSubject {
+    var timestamp: Long,
+    var otherInfo: Any?)//: ShipmentSubject {
 {
+    private var shippingUpdate: UpdateStrategy = when (status) {
+        "created" -> CreatedUpdate()
+        "shipped" -> ShippedUpdate()
+        else -> throw IllegalArgumentException("Invalid status")
+    }
+    init {
+        shippingUpdate.processUpdate(this)
+    }
+
     lateinit var shippingUpdateHistory: MutableList<ShippingUpdate>
         private set
 
     lateinit var notes: MutableList<String>
         private set
+
+    var expectedDeliveryDate: Long = 0
 
     var currentLocation: String = "unknown"
 

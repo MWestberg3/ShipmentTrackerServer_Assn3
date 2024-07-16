@@ -1,6 +1,7 @@
 class ShippedUpdate : UpdateStrategy {
     override fun processUpdate(shipment: Shipment) {
-        val update = ShippingUpdate(shipment.shippingUpdateHistory.lastOrNull()?.newStatus, shipment.status, shipment.expectedDeliveryDate)
+        shipment.expectedDeliveryDate = shipment.otherInfo as Long
+        val update = ShippingUpdate(shipment.shippingUpdateHistory.lastOrNull()?.newStatus, shipment.status, shipment.timestamp)
         shipment.addUpdate(update)
     }
 }
