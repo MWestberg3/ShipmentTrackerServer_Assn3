@@ -7,6 +7,13 @@ class Shipment(
     private var shippingUpdate: UpdateStrategy = when (status) {
         "created" -> CreatedUpdate()
         "shipped" -> ShippedUpdate()
+        "location" -> LocationUpdate()
+        "delivered" -> DeliveredUpdate()
+        "delayed" -> DelayedUpdate()
+        "lost" -> LostUpdate()
+        "cancelled" -> CancelledUpdate()
+        "canceled" -> CancelledUpdate()
+        "noteadded" -> NoteAddedUpdate()
         else -> throw IllegalArgumentException("Invalid status")
     }
     init {
