@@ -16,6 +16,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
 import kotlinx.coroutines.launch
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
+import java.time.Instant
+import java.time.ZoneId
 
 @Composable
 @Preview
@@ -84,6 +88,7 @@ fun App(trackingSimulator: TrackingSimulator) {
 }
 
 fun formatTrackingInfo(trackerViewHelper: TrackerViewHelper): String {
+    val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
     return buildString {
         append("Tracking Shipment: ${trackerViewHelper.shipmentId}\n")
         append("Status: ${trackerViewHelper.shipmentStatus}\n")
@@ -92,22 +97,27 @@ fun formatTrackingInfo(trackerViewHelper: TrackerViewHelper): String {
         if (trackerViewHelper.expectedShipmentDeliveryDate.isEmpty() || trackerViewHelper.expectedShipmentDeliveryDate.last() == "null") {
             append("--")
         } else {
-            append(trackerViewHelper.expectedShipmentDeliveryDate.last())
+            val timestamp = trackerViewHelper.expectedShipmentDeliveryDate.last().toLong()
+            val dateTime = LocalDateTime.ofInstant(Instant.ofEpochMilli(timestamp), ZoneId.systemDefault())
+            append(formatter.format(dateTime))
         }
     }
 }
 
 fun formatStatusUpdates(trackerViewHelper: TrackerViewHelper): String {
+    val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
     return buildString {
         append("\nStatus Updates:\n")
         if (trackerViewHelper.shipmentUpdateHistory.size < 2) {
             append("No updates yet\n")
         } else {
             for (i in 1 until trackerViewHelper.shipmentUpdateHistory.size) {
-                val previousStatus = trackerViewHelper.shipmentUpdateHistory[i - 1]
-                val currentStatus = trackerViewHelper.shipmentUpdateHistory[i]
+                val previousStatus = trackerViewHelper.shipmentUpdateHistory[i].previousStatus
+                val currentStatus = trackerViewHelper.shipmentUpdateHistory[i].newStatus
+                val timestamp = trackerViewHelper.shipmentUpdateHistory[i].timestamp
+                val dateTime = LocalDateTime.ofInstant(Instant.ofEpochMilli(timestamp), ZoneId.systemDefault())
                 if (previousStatus != currentStatus)
-                    append("Shipment went from $previousStatus to $currentStatus\n")
+                    append("Shipment went from $previousStatus to $currentStatus at $dateTime\n")
         }
         }
     }

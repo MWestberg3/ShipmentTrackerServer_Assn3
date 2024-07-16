@@ -7,7 +7,7 @@ class TrackerViewHelper(private var simulator: TrackingSimulator) : ShipmentObse
         private set
     var shipmentNotes by mutableStateOf(mutableListOf<String>())
         private set
-    var shipmentUpdateHistory by mutableStateOf(mutableListOf<String>())
+    var shipmentUpdateHistory by mutableStateOf(mutableListOf<ShippingUpdate>())
         private set
     var expectedShipmentDeliveryDate by mutableStateOf(mutableListOf<String>())
         private set
@@ -23,7 +23,7 @@ class TrackerViewHelper(private var simulator: TrackingSimulator) : ShipmentObse
             this.shipmentId = it.id
             this.shipmentNotes = it.notes
             this.shipmentStatus = it.status.toString()
-            this.shipmentUpdateHistory = it.shippingUpdateHistory.map { it.newStatus.toString() }.toMutableList()
+            this.shipmentUpdateHistory = it.shippingUpdateHistory.toMutableList()
             this.expectedShipmentDeliveryDate = mutableListOf(it.expectedDeliveryDate.toString())
             this.currentLocation = it.currentLocation
         }
@@ -38,7 +38,7 @@ class TrackerViewHelper(private var simulator: TrackingSimulator) : ShipmentObse
         this.shipmentId = shipment.id
         this.shipmentNotes = shipment.notes.toMutableList()
         this.shipmentStatus = shipment.status.toString()
-        this.shipmentUpdateHistory = shipment.shippingUpdateHistory.map { it.newStatus.toString() }.toMutableList()
+        this.shipmentUpdateHistory = shipment.shippingUpdateHistory.toMutableList()
         this.expectedShipmentDeliveryDate = mutableListOf(shipment.expectedDeliveryDate.toString())
         this.currentLocation = shipment.currentLocation
     }
