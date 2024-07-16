@@ -1,4 +1,4 @@
-package ShippingEvents
+package shippingEvents
 
 enum class ShippingEventType {
     CREATED,

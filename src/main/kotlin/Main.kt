@@ -1,5 +1,5 @@
-import ShippingEvents.ShippingEvent
-import ShippingEvents.ShippingEventType
+import shippingEvents.ShippingEvent
+import shippingEvents.ShippingEventType
 import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -59,9 +59,7 @@ fun App(trackingSimulator: TrackingSimulator) {
                 }) {
                     Text("Look up")
                 }
-                if (searchResult != null) {
-                    Text(searchResult!!)
-                }
+                Text(trackerViewHelper.shipmentStatus)
             }
         }
     }

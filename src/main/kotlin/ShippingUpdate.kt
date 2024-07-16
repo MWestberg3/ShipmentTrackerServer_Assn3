@@ -1,4 +1,4 @@
-import ShippingEvents.ShippingEventType
+import shippingEvents.ShippingEventType
 
 data class ShippingUpdate(
     var previousStatus: ShippingEventType?,

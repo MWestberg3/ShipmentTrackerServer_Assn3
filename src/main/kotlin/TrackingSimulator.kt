@@ -1,6 +1,6 @@
-import ShippingEvents.ShippingEvent
-import ShippingEvents.ShippingEventType
-import Strategies.*
+import shippingEvents.ShippingEvent
+import shippingEvents.ShippingEventType
+import strategies.*
 import kotlinx.coroutines.delay
 
 class TrackingSimulator {

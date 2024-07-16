@@ -1,4 +1,4 @@
-import ShippingEvents.ShippingEventType
+import shippingEvents.ShippingEventType
 
 class Shipment(
     var id: String,

@@ -1,7 +1,7 @@
-package Strategies
+package strategies
 
 import Shipment
-import ShippingEvents.ShippingEvent
+import shippingEvents.ShippingEvent
 import ShippingUpdate
 import UpdateStrategy
 
