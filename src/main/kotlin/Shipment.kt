@@ -2,7 +2,7 @@ class Shipment(
     var status: String,
     var id: String,
     var timestamp: Long,
-    var otherInfo: Any?)//: ShipmentSubject {
+    var otherInfo: String?)//: ShipmentSubject {
 {
     private var shippingUpdate: UpdateStrategy = when (status) {
         "created" -> CreatedUpdate()
@@ -16,19 +16,29 @@ class Shipment(
         "noteadded" -> NoteAddedUpdate()
         else -> throw IllegalArgumentException("Invalid status")
     }
+    var shippingUpdateHistory: MutableList<ShippingUpdate> = mutableListOf()
+        private set
+
+    var notes: MutableList<String> = mutableListOf()
+        private set
+
+    var expectedDeliveryDate: Long? = null
+
+    var currentLocation: String? = null
+
     init {
         shippingUpdate.processUpdate(this)
     }
 
-    lateinit var shippingUpdateHistory: MutableList<ShippingUpdate>
-        private set
+    fun addNote(note: String) {
+        notes.add(note)
+    }
 
-    lateinit var notes: MutableList<String>
-        private set
-
-    var expectedDeliveryDate: Long = 0
-
-    var currentLocation: String = "unknown"
+    fun addUpdate(update: ShippingUpdate) {
+        
+        shippingUpdateHistory.add(update)
+//        notifyObservers()
+    }
 
 //    @Override
 //    override fun registerObserver(observer: ShipmentObserver) {
@@ -44,13 +54,4 @@ class Shipment(
 //    override fun notifyObservers() {
 //        shippingUpdateHistory.forEach { it.notify(this) }
 //    }
-
-    fun addNote(note: String) {
-        notes.add(note)
-    }
-
-    fun addUpdate(update: ShippingUpdate) {
-        shippingUpdateHistory.add(update)
-//        notifyObservers()
-    }
 }
