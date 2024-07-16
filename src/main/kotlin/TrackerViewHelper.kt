@@ -2,7 +2,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 
-class TrackerViewHelper() {
+class TrackerViewHelper() : ShipmentObserver {
     var shipmentId by mutableStateOf("")
         private set
     var shipmentTotes by mutableStateOf(mutableListOf<String>())
@@ -20,5 +20,9 @@ class TrackerViewHelper() {
 
     fun stopTracking() {
 
+    }
+
+    override fun notify(shipment: Shipment) {
+        TODO("Not yet implemented")
     }
 }

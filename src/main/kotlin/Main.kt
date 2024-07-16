@@ -21,14 +21,16 @@ import androidx.compose.ui.window.application
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import java.io.File
 
 @Composable
 @Preview
 fun App() {
     val trackerViewHelper = remember { TrackerViewHelper() }
     val coroutineScope = rememberCoroutineScope()
+    val trackingSimulator = TrackingSimulator()
     val shipments = loadShipmentData()
-    val trackingSimulator = TrackingSimulator(shipments)
+    shipments.forEach { trackingSimulator.addShipment(it) }
     var shipmentIdInput by remember { mutableStateOf(TextFieldValue("")) }
     var searchResult by remember { mutableStateOf<String?>(null)}
 
@@ -66,23 +68,20 @@ fun App() {
 }
 
 fun loadShipmentData(): MutableList<Shipment> {
-    val shipment1 = Shipment(
-        "In transit",
-        "1",
-        mutableListOf("Note 1", "Note 2"),
-        mutableListOf(ShippingUpdate("In transit", "Location 1", 1652712855468)),
-        1626345600,
-        "Location 1"
-    )
-    val shipment2 = Shipment(
-        "Delivered",
-        "2",
-        mutableListOf("Note 1", "Note 2"),
-        mutableListOf(ShippingUpdate("In transit", "Location 1", 1652712855468)),
-        1626345600,
-        "Location 1"
-    )
-    return mutableListOf(shipment1, shipment2)
+    val filepath = "/Users/mwestberg/IdeaProjects/test.txt"
+    val shipments = mutableListOf<Shipment>()
+
+    File(filepath).forEachLine { line ->
+        val parts = line.split(",")
+        val status = parts[0]
+        val id = parts[1]
+        val expectedDeliveryDate = parts[2].toLong()
+        val otherInfo = if (parts.size > 3) parts[3] else null
+
+        shipments.add(Shipment(status, id, expectedDeliveryDate, otherInfo))
+    }
+
+    return shipments
 }
 
 fun main() = application {

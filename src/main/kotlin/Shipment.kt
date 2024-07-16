@@ -1,39 +1,38 @@
 class Shipment(
     var status: String,
     var id: String,
-    notes: MutableList<String>,
-    updateHistory: MutableList<ShippingUpdate>,
     var expectedDeliveryDate: Long,
-    var currentLocation: String): ShipmentSubject {
-
-    private val observers: MutableList<ShipmentObserver> = mutableListOf()
-
-    var notes: MutableList<String> = notes
+    var otherInfo: String?)//: ShipmentSubject {
+{
+    lateinit var shippingUpdateHistory: MutableList<ShippingUpdate>
         private set
 
-    var updateHistory: MutableList<ShippingUpdate> = updateHistory
+    lateinit var notes: MutableList<String>
         private set
 
-    @Override
-    override fun registerObserver(observer: ShipmentObserver) {
-        observers.add(observer)
-    }
+    var currentLocation: String = "unknown"
 
-    @Override
-    override fun removeObserver(observer: ShipmentObserver) {
-        observers.remove(observer)
-    }
-
-    @Override
-    override fun notifyObservers() {
-        observers.forEach { it.notify(status, expectedDeliveryDate) }
-    }
+//    @Override
+//    override fun registerObserver(observer: ShipmentObserver) {
+//        shippingUpdateHistory.add(observer)
+//    }
+//
+//    @Override
+//    override fun removeObserver(observer: ShipmentObserver) {
+//        shippingUpdateHistory.remove(observer)
+//    }
+//
+//    @Override
+//    override fun notifyObservers() {
+//        shippingUpdateHistory.forEach { it.notify(this) }
+//    }
 
     fun addNote(note: String) {
         notes.add(note)
     }
 
     fun addUpdate(update: ShippingUpdate) {
-        updateHistory.add(update)
+        shippingUpdateHistory.add(update)
+//        notifyObservers()
     }
 }
