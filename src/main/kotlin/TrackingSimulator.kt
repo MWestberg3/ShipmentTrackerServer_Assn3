@@ -1,6 +1,7 @@
 import ShippingEvents.ShippingEvent
 import ShippingEvents.ShippingEventType
 import Strategies.*
+import kotlinx.coroutines.delay
 
 class TrackingSimulator {
     private var shipments: MutableList<Shipment> = mutableListOf()
@@ -15,7 +16,7 @@ class TrackingSimulator {
     fun setEvents(events: List<ShippingEvent>) {
         this.events = events.toMutableList()
     }
-    fun strategyPicker5000(eventType: ShippingEventType): UpdateStrategy {
+    private fun strategyPicker5000(eventType: ShippingEventType): UpdateStrategy {
         return when (eventType) {
             ShippingEventType.CANCELLED -> CancelledStrategy()
             ShippingEventType.CREATED -> CreatedStrategy()
@@ -27,17 +28,21 @@ class TrackingSimulator {
             ShippingEventType.SHIPPED -> ShippedStrategy()
         }
     }
-    fun runSimulation() {
+    suspend fun runSimulation() {
         events.forEach { event ->
             var shipment = findShipmentById(event.shipmentID)
+            var isNewShipment = false
+            val strategy = strategyPicker5000(event.type)
             if (shipment == null) {
                 // error check for if shipment hasn't been created but trying to modify?
                 shipment = Shipment(event.shipmentID)
                 addShipment(shipment)
+                isNewShipment = true
             }
-            val strategy = strategyPicker5000(event.type)
             strategy.processUpdate(shipment, event)
-            // wait for one second
+            if (!isNewShipment) {
+                delay(1000L)
+            }
         }
     }
 }

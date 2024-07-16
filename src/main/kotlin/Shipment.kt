@@ -15,10 +15,10 @@ class Shipment(
     // add a timestamp
     fun addNote(note: String) {
         notes.add(note)
+        notifyObservers()
     }
 
     fun addUpdate(update: ShippingUpdate) {
-        this.status = update.newStatus
         shippingUpdateHistory.add(update)
         notifyObservers()
     }

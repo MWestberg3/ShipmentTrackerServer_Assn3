@@ -23,12 +23,9 @@ import java.io.File
 
 @Composable
 @Preview
-fun App() {
-    val trackerViewHelper = remember { TrackerViewHelper() }
+fun App(trackingSimulator: TrackingSimulator) {
     val coroutineScope = rememberCoroutineScope()
-    val trackingSimulator = TrackingSimulator()
-    trackingSimulator.setEvents(loadShipmentData())
-    trackingSimulator.runSimulation()
+    val trackerViewHelper = remember { TrackerViewHelper(trackingSimulator) }
     var shipmentIdInput by remember { mutableStateOf(TextFieldValue("")) }
     var searchResult by remember { mutableStateOf<String?>(null)}
 
@@ -52,10 +49,15 @@ fun App() {
                 Button(onClick = {
                     coroutineScope.launch {
                         val found = trackingSimulator.findShipmentById(shipmentIdInput.text)
-                        searchResult = if (found != null) "Shipment found!" else "Shipment not found!"
+                        if (found != null) {
+                            trackerViewHelper.trackShipment(shipmentIdInput.text)
+                            searchResult = "Tracking started for shipment ID: ${shipmentIdInput.text}, Status: ${trackerViewHelper.shipmentStatus}"
+                        } else {
+                            searchResult = "Shipment ID not found: ${shipmentIdInput.text}"
+                        }
                     }
                 }) {
-                    Text("Look up Shipment ID")
+                    Text("Look up")
                 }
                 if (searchResult != null) {
                     Text(searchResult!!)
@@ -85,6 +87,13 @@ fun loadShipmentData(): MutableList<ShippingEvent> {
 
 fun main() = application {
     Window(onCloseRequest = ::exitApplication) {
-        App()
+        val trackingSimulator = TrackingSimulator()
+        val coroutineScope = rememberCoroutineScope()
+
+        coroutineScope.launch {
+            trackingSimulator.setEvents(loadShipmentData())
+            trackingSimulator.runSimulation()
+        }
+        App(trackingSimulator)
     }
 }
