@@ -66,6 +66,28 @@ fun App(trackingSimulator: TrackingSimulator) {
                     Text("Look up")
                 }
             }
+            if (shipmentNotFound != null) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp)
+                        .border(2.dp, Color.Red)
+                        .background(Color.White)
+                        .padding(8.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Text(text = shipmentNotFound!!, color = Color.Red)
+                        Button(onClick = { shipmentNotFound = null }) {
+                            Text("X")
+                        }
+                    }
+                }
+            }
             trackerViewHelpers.forEachIndexed { index, trackerViewHelper ->
                 Box {
                     Column(
