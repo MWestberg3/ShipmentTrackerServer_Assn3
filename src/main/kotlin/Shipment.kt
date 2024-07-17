@@ -1,4 +1,6 @@
 import ShippingEvents.ShippingEventType
+import api.ShipmentObserver
+import api.ShipmentSubject
 
 class Shipment(
     var id: String,

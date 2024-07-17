@@ -3,7 +3,7 @@ package Strategies
 import Shipment
 import ShippingEvents.ShippingEvent
 import ShippingUpdate
-import UpdateStrategy
+import api.UpdateStrategy
 
 class LostStrategy : UpdateStrategy {
     override fun processUpdate(shipment: Shipment, event: ShippingEvent) {

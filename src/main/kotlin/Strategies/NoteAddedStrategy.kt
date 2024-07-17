@@ -2,7 +2,7 @@ package Strategies
 
 import Shipment
 import ShippingEvents.ShippingEvent
-import UpdateStrategy
+import api.UpdateStrategy
 
 class NoteAddedStrategy : UpdateStrategy {
     override fun processUpdate(shipment: Shipment, event: ShippingEvent) {
