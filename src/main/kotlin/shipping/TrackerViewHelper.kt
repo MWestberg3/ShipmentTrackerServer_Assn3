@@ -33,7 +33,7 @@ class TrackerViewHelper(private var simulator: TrackingSimulator) : ShipmentObse
     }
 
     fun stopTracking() {
-        val shipment = TrackingSimulator().findShipmentById(shipmentId)
+        val shipment = simulator.findShipmentById(shipmentId)
         shipment?.removeObserver(this)
     }
 
