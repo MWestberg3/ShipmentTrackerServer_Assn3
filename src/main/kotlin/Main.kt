@@ -4,6 +4,8 @@ import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Button
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
@@ -26,38 +28,18 @@ import java.time.ZoneId
 @Preview
 fun App(trackingSimulator: TrackingSimulator) {
     val coroutineScope = rememberCoroutineScope()
-    val trackerViewHelper = remember { TrackerViewHelper(trackingSimulator) }
+    var trackerViewHelpers by remember { mutableStateOf(listOf<TrackerViewHelper>()) }
     var shipmentIdInput by remember { mutableStateOf(TextFieldValue("")) }
-    var trackingInfo by remember { mutableStateOf<String?>(null)}
-    var updateInfo by remember { mutableStateOf<String?>(null)}
-    var notesInfo by remember { mutableStateOf<String?>(null)}
     var shipmentNotFound by remember { mutableStateOf<String?>(null)}
-
-    val trackerProperties = listOf(
-        trackerViewHelper.shipmentId,
-        trackerViewHelper.expectedShipmentDeliveryDate,
-        trackerViewHelper.shipmentStatus,
-        trackerViewHelper.currentLocation
-    )
-
-    LaunchedEffect(trackerProperties) {
-        trackingInfo = formatTrackingInfo(trackerViewHelper)
-    }
-
-    LaunchedEffect(trackerViewHelper.shipmentUpdateHistory) {
-        updateInfo = formatStatusUpdates(trackerViewHelper)
-    }
-
-    LaunchedEffect(trackerViewHelper.shipmentNotes) {
-        notesInfo = formatNotesUpdates(trackerViewHelper)
-    }
+    val scrollState = rememberScrollState()
 
     MaterialTheme{
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .background(Color.LightGray)
-                .padding(16.dp),
+                .padding(16.dp)
+                .verticalScroll(scrollState),
         ) {
             Row(
                 modifier = Modifier
@@ -72,7 +54,10 @@ fun App(trackingSimulator: TrackingSimulator) {
                     coroutineScope.launch {
                         val found = trackingSimulator.findShipmentById(shipmentIdInput.text)
                         if (found != null) {
-                            trackerViewHelper.trackShipment(shipmentIdInput.text)
+                            val newTrackerViewHelper = TrackerViewHelper(trackingSimulator).apply {
+                                trackShipment(shipmentIdInput.text)
+                            }
+                            trackerViewHelpers = trackerViewHelpers + newTrackerViewHelper
                         } else {
                             shipmentNotFound = "Shipment ID not found: ${shipmentIdInput.text}"
                         }
@@ -81,16 +66,30 @@ fun App(trackingSimulator: TrackingSimulator) {
                     Text("Look up")
                 }
             }
-            Column (
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp)
-                    .border(2.dp, Color.Black)
-                    .background(Color.White),
-            ) {
-                Text(text = trackingInfo ?: "", color = Color.Black)
-                Text(text = updateInfo ?: "", color = Color.Black)
-                Text(text = notesInfo ?: "", color = Color.Black)
+            trackerViewHelpers.forEachIndexed { index, trackerViewHelper ->
+                Box {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp)
+                            .border(2.dp, Color.Black)
+                            .background(Color.White)
+                            .padding(8.dp),
+                    ) {
+                        Text(text = formatTrackingInfo(trackerViewHelper) ?: "", color = Color.Black)
+                        Text(text = formatStatusUpdates(trackerViewHelper) ?: "", color = Color.Black)
+                        Text(text = formatNotesUpdates(trackerViewHelper) ?: "", color = Color.Black)
+                    }
+                    Button(
+                        onClick = {
+                            trackerViewHelper.stopTracking() // stop tracking
+                            trackerViewHelpers = trackerViewHelpers.toMutableList().also { it.removeAt(index) }
+                                  },
+                        modifier = Modifier.align(Alignment.TopEnd)
+                    ) {
+                        Text("X")
+                        }
+                }
             }
         }
     }
