@@ -2,6 +2,7 @@ import ShippingEvents.ShippingEvent
 import ShippingEvents.ShippingEventType
 import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Button
 import androidx.compose.material.MaterialTheme
@@ -55,7 +56,7 @@ fun App(trackingSimulator: TrackingSimulator) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(Color.White)
+                .background(Color.LightGray)
                 .padding(16.dp),
         ) {
             Row(
@@ -80,9 +81,17 @@ fun App(trackingSimulator: TrackingSimulator) {
                     Text("Look up")
                 }
             }
-            Text(text = trackingInfo ?: "", color = Color.Black)
-            Text(text = updateInfo ?: "", color = Color.Black)
-            Text(text = notesInfo ?: "", color = Color.Black)
+            Column (
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp)
+                    .border(2.dp, Color.Black)
+                    .background(Color.White),
+            ) {
+                Text(text = trackingInfo ?: "", color = Color.Black)
+                Text(text = updateInfo ?: "", color = Color.Black)
+                Text(text = notesInfo ?: "", color = Color.Black)
+            }
         }
     }
 }
