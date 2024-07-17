@@ -1,3 +1,5 @@
+package shipping
+
 import ShippingEvents.ShippingEventType
 import api.ShipmentObserver
 import api.ShipmentSubject

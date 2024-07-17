@@ -1,6 +1,6 @@
 package api
 
-import Shipment
+import shipping.Shipment
 
 interface ShipmentObserver {
     fun notify(shipment: Shipment)

@@ -1,8 +1,8 @@
 package Strategies
 
-import Shipment
+import shipping.Shipment
 import ShippingEvents.ShippingEvent
-import ShippingUpdate
+import shipping.ShippingUpdate
 import api.UpdateStrategy
 
 class DelayedStrategy : UpdateStrategy {

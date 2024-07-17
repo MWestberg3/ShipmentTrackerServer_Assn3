@@ -1,5 +1,3 @@
-import ShippingEvents.ShippingEvent
-import ShippingEvents.ShippingEventType
 import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -19,6 +17,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
 import kotlinx.coroutines.launch
+import shipping.TrackerViewHelper
+import shipping.TrackingSimulator
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.time.Instant
@@ -59,7 +59,7 @@ fun App(trackingSimulator: TrackingSimulator) {
                             }
                             trackerViewHelpers = trackerViewHelpers + newTrackerViewHelper
                         } else {
-                            shipmentNotFound = "Shipment ID not found: ${shipmentIdInput.text}"
+                            shipmentNotFound = "shipping.Shipment ID not found: ${shipmentIdInput.text}"
                         }
                     }
                 }) {
@@ -120,7 +120,7 @@ fun App(trackingSimulator: TrackingSimulator) {
 fun formatTrackingInfo(trackerViewHelper: TrackerViewHelper): String {
     val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
     return buildString {
-        append("Tracking Shipment: ${trackerViewHelper.shipmentId}\n")
+        append("Tracking shipping.Shipment: ${trackerViewHelper.shipmentId}\n")
         append("Status: ${trackerViewHelper.shipmentStatus}\n")
         append("Location: ${trackerViewHelper.currentLocation}\n")
         append("Expected Delivery Date: ")
@@ -147,7 +147,7 @@ fun formatStatusUpdates(trackerViewHelper: TrackerViewHelper): String {
                 val timestamp = trackerViewHelper.shipmentUpdateHistory[i].timestamp
                 val dateTime = LocalDateTime.ofInstant(Instant.ofEpochMilli(timestamp), ZoneId.systemDefault())
                 if (previousStatus != currentStatus)
-                    append("Shipment went from $previousStatus to $currentStatus at $dateTime\n")
+                    append("shipping.Shipment went from $previousStatus to $currentStatus at $dateTime\n")
         }
         }
     }

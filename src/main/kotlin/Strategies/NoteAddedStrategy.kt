@@ -1,6 +1,6 @@
 package Strategies
 
-import Shipment
+import shipping.Shipment
 import ShippingEvents.ShippingEvent
 import api.UpdateStrategy
 

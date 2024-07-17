@@ -1,3 +1,5 @@
+package shipping
+
 import ShippingEvents.ShippingEvent
 import ShippingEvents.ShippingEventType
 import Strategies.*

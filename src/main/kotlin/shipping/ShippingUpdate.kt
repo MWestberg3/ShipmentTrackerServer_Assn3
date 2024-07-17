@@ -1,3 +1,5 @@
+package shipping
+
 import ShippingEvents.ShippingEventType
 
 data class ShippingUpdate(
