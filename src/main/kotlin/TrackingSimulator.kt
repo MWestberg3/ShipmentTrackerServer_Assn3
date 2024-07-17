@@ -14,7 +14,7 @@ class TrackingSimulator {
     fun addShipment(shipment: Shipment) {
         shipments.add(shipment)
     }
-    fun setEvents(events: List<ShippingEvent>) {
+    private fun setEvents(events: List<ShippingEvent>) {
         this.events = events.toMutableList()
     }
     private fun strategyPicker5000(eventType: ShippingEventType): UpdateStrategy {
@@ -29,7 +29,7 @@ class TrackingSimulator {
             ShippingEventType.SHIPPED -> ShippedStrategy()
         }
     }
-    fun loadShipmentData() {
+    private fun loadShipmentData() {
         val filepath = "/Users/mwestberg/IdeaProjects/test.txt"
         val shippingEvents = mutableListOf<ShippingEvent>()
 
