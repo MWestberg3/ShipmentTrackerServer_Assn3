@@ -60,7 +60,7 @@ class TrackingSimulator {
                 isNewShipment = true
             }
             if (!isNewShipment) {
-                delay(500L)
+                delay(1000L)
             }
             strategy.processUpdate(shipment, event)
         }
