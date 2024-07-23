@@ -69,7 +69,7 @@ fun App(trackingSimulator: TrackingSimulator) {
                             }
                             trackerViewHelpers = trackerViewHelpers + newTrackerViewHelper
                         } else {
-                            shipmentNotFound = "Shipment ID not found: ${shipmentIdInput.text}"
+                            shipmentNotFound = "Shipment ID not yet created: ${shipmentIdInput.text}"
                         }
                     }
                 }) {

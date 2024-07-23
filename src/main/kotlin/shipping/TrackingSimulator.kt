@@ -112,6 +112,9 @@ class TrackingSimulator private constructor(){
                     var isNewShipment = false
                     val strategy = strategyPicker5000(event.type)
                     if (shipment == null) {
+                        if (event.type != ShippingEventType.CREATED) {
+                            continue
+                        }
                         shipment = if (event.otherInfo == null) {
                             BasicShippingType().createShipment("standard shipment", event.shipmentID)
                         } else {
