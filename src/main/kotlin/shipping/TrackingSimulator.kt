@@ -7,6 +7,10 @@ import api.UpdateStrategy
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import shipping.factory.BasicShippingType
+import shipping.factory.ShipmentFactory
+import shipping.shipment.Shipment
+import shipping.shipment.StandardShipment
 import java.io.File
 import java.util.*
 
@@ -108,8 +112,7 @@ class TrackingSimulator private constructor(){
                     var isNewShipment = false
                     val strategy = strategyPicker5000(event.type)
                     if (shipment == null) {
-                        // error check for if shipment hasn't been created but trying to modify?
-                        shipment = Shipment(event.shipmentID)
+                        shipment = BasicShippingType().createShipment("standard shipment", event.shipmentID)
                         addShipment(shipment)
                         isNewShipment = true
                     }

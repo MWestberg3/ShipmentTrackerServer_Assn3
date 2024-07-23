@@ -4,6 +4,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import api.ShipmentObserver
+import shipping.shipment.Shipment
 
 class TrackerViewHelper(private var simulator: TrackingSimulator) : ShipmentObserver {
     var shipmentId by mutableStateOf("")

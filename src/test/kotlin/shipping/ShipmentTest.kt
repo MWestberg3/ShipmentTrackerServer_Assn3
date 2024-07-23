@@ -3,6 +3,7 @@ package shipping
 import ShippingEvents.ShippingEventType
 import api.ShipmentObserver
 import org.junit.jupiter.api.Assertions.*
+import shipping.shipment.Shipment
 
 class ShipmentTest {
     @org.junit.jupiter.api.Test

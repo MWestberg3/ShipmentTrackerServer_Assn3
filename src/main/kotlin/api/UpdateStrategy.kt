@@ -1,6 +1,6 @@
 package api
 
-import shipping.Shipment
+import shipping.shipment.Shipment
 import ShippingEvents.ShippingEvent
 
 interface UpdateStrategy {

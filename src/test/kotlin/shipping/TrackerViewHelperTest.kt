@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test
 
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
+import shipping.shipment.Shipment
 
 class TrackerViewHelperTest {
     private lateinit var trackerViewHelper: TrackerViewHelper

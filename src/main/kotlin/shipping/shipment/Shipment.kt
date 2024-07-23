@@ -1,10 +1,11 @@
-package shipping
+package shipping.shipment
 
 import ShippingEvents.ShippingEventType
 import api.ShipmentObserver
 import api.ShipmentSubject
+import shipping.ShippingUpdate
 
-class Shipment(
+abstract class Shipment(
     var id: String,
 ): ShipmentSubject {
     var status: ShippingEventType = ShippingEventType.CREATED
