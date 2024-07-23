@@ -4,14 +4,13 @@ import ShippingEvents.ShippingEvent
 import ShippingEvents.ShippingEventType
 import Strategies.*
 import api.UpdateStrategy
-import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import java.io.File
 import java.util.*
 
-class TrackingSimulator {
+class TrackingSimulator private constructor(){
     private val shipmentsMutex = Mutex()
     private val eventsMutex = Mutex()
     private var currentIndex = 0
@@ -19,6 +18,14 @@ class TrackingSimulator {
 
     private var shipments: MutableList<Shipment> = Collections.synchronizedList(mutableListOf())
     private var events: MutableList<ShippingEvent> = Collections.synchronizedList(mutableListOf())
+
+    companion object {
+        @Volatile private var instance: TrackingSimulator? = null
+
+        fun getInstance(): TrackingSimulator = instance ?: synchronized(this) {
+            instance ?: TrackingSimulator().also { instance = it }
+        }
+    }
 
     suspend fun findShipmentById(id: String): Shipment? {
         shipmentsMutex.withLock {

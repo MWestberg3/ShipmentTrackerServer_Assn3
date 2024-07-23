@@ -179,7 +179,7 @@ fun formatNotesUpdates(trackerViewHelper: TrackerViewHelper): String {
 }
 
 fun main() = application {
-    val trackingSimulator = TrackingSimulator()
+    val trackingSimulator = TrackingSimulator.getInstance()
 
     Window(onCloseRequest = ::exitApplication) {
         App(trackingSimulator)
