@@ -16,9 +16,19 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
+import io.ktor.http.*
+import io.ktor.server.application.*
+import io.ktor.server.engine.*
+import io.ktor.server.netty.*
+import io.ktor.server.request.*
+import io.ktor.server.response.*
+import io.ktor.server.routing.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import shipping.TrackerViewHelper
 import shipping.TrackingSimulator
+import java.io.File
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.time.Instant
@@ -59,7 +69,7 @@ fun App(trackingSimulator: TrackingSimulator) {
                             }
                             trackerViewHelpers = trackerViewHelpers + newTrackerViewHelper
                         } else {
-                            shipmentNotFound = "shipping.Shipment ID not found: ${shipmentIdInput.text}"
+                            shipmentNotFound = "Shipment ID not found: ${shipmentIdInput.text}"
                         }
                     }
                 }) {
@@ -104,9 +114,11 @@ fun App(trackingSimulator: TrackingSimulator) {
                     }
                     Button(
                         onClick = {
-                            trackerViewHelper.stopTracking() // stop tracking
-                            trackerViewHelpers = trackerViewHelpers.toMutableList().also { it.removeAt(index) }
-                                  },
+                            coroutineScope.launch {
+                                trackerViewHelper.stopTracking() // stop tracking
+                                trackerViewHelpers = trackerViewHelpers.toMutableList().also { it.removeAt(index) }
+                            }
+                        },
                         modifier = Modifier.align(Alignment.TopEnd)
                     ) {
                         Text("X")
@@ -120,7 +132,7 @@ fun App(trackingSimulator: TrackingSimulator) {
 fun formatTrackingInfo(trackerViewHelper: TrackerViewHelper): String {
     val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
     return buildString {
-        append("Tracking shipping.Shipment: ${trackerViewHelper.shipmentId}\n")
+        append("Tracking Shipment: ${trackerViewHelper.shipmentId}\n")
         append("Status: ${trackerViewHelper.shipmentStatus}\n")
         append("Location: ${trackerViewHelper.currentLocation}\n")
         append("Expected Delivery Date: ")
@@ -147,7 +159,7 @@ fun formatStatusUpdates(trackerViewHelper: TrackerViewHelper): String {
                 val timestamp = trackerViewHelper.shipmentUpdateHistory[i].timestamp
                 val dateTime = LocalDateTime.ofInstant(Instant.ofEpochMilli(timestamp), ZoneId.systemDefault())
                 if (previousStatus != currentStatus)
-                    append("shipping.Shipment went from $previousStatus to $currentStatus at $dateTime\n")
+                    append("Shipment went from $previousStatus to $currentStatus at $dateTime\n")
         }
         }
     }
@@ -167,13 +179,31 @@ fun formatNotesUpdates(trackerViewHelper: TrackerViewHelper): String {
 }
 
 fun main() = application {
-    Window(onCloseRequest = ::exitApplication) {
-        val trackingSimulator = TrackingSimulator()
-        val coroutineScope = rememberCoroutineScope()
+    val trackingSimulator = TrackingSimulator()
 
-        coroutineScope.launch {
-            trackingSimulator.runSimulation()
-        }
+    Window(onCloseRequest = ::exitApplication) {
         App(trackingSimulator)
     }
+
+    CoroutineScope(Dispatchers.Default).launch {
+        trackingSimulator.runSimulation()
+    }
+
+    CoroutineScope(Dispatchers.IO).launch {
+        embeddedServer(Netty, 8080) {
+            routing {
+                get("/") {
+                    call.respondText(File("index.html").readText(), ContentType.Text.Html)
+                }
+
+                post("/data") {
+                    val data = call.receiveText()
+                    print(data)
+                    trackingSimulator.readInShipmentData(data)
+                    call.respondText { "Shipment Tracked" }
+                }
+            }
+        }.start(wait = true)
+    }
+
 }

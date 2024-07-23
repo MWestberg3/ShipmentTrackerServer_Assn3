@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script type="text/javascript">
+        function sendDate() {
+            fetch("/data", {
+                method: "POST",
+                body: document.getElementById("input").value
+            })
+        }
+    </script>
+</head>
+<body>
+<h1>Tracker</h1>
+<div>
+    <label for="input">Enter shipment information:</label>
+    <input type="text" id="input">
+    <button onclick="sendDate()">Submit</button>
+</div>
+</body>
+</html>

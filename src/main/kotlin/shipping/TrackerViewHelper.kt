@@ -19,7 +19,7 @@ class TrackerViewHelper(private var simulator: TrackingSimulator) : ShipmentObse
     var currentLocation by mutableStateOf("")
         private set
 
-    fun trackShipment(id: String) {
+    suspend fun trackShipment(id: String) {
         val shipment = simulator.findShipmentById(id)
         shipment?.let {
             it.registerObserver(this)
@@ -32,7 +32,7 @@ class TrackerViewHelper(private var simulator: TrackingSimulator) : ShipmentObse
         }
     }
 
-    fun stopTracking() {
+    suspend fun stopTracking() {
         val shipment = simulator.findShipmentById(shipmentId)
         shipment?.removeObserver(this)
     }

@@ -4,21 +4,34 @@ import ShippingEvents.ShippingEvent
 import ShippingEvents.ShippingEventType
 import Strategies.*
 import api.UpdateStrategy
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import java.io.File
+import java.util.*
 
 class TrackingSimulator {
-    private var shipments: MutableList<Shipment> = mutableListOf()
-    private var events: MutableList<ShippingEvent> = mutableListOf()
+    private val shipmentsMutex = Mutex()
+    private val eventsMutex = Mutex()
+    private var currentIndex = 0
+    private var pause = false
 
-    fun findShipmentById(id: String): Shipment? {
-        return shipments.find { it.id == id }
+    private var shipments: MutableList<Shipment> = Collections.synchronizedList(mutableListOf())
+    private var events: MutableList<ShippingEvent> = Collections.synchronizedList(mutableListOf())
+
+    suspend fun findShipmentById(id: String): Shipment? {
+        shipmentsMutex.withLock {
+            return shipments.find { it.id == id }
+        }
     }
-    fun addShipment(shipment: Shipment) {
-        shipments.add(shipment)
+    suspend fun addShipment(shipment: Shipment) {
+        shipmentsMutex.withLock {
+            shipments.add(shipment)
+        }
     }
     private fun setEvents(events: List<ShippingEvent>) {
-        this.events = events.toMutableList()
+        this.events = Collections.synchronizedList(events.toMutableList())
     }
     private fun strategyPicker5000(eventType: ShippingEventType): UpdateStrategy {
         return when (eventType) {
@@ -50,22 +63,63 @@ class TrackingSimulator {
         setEvents(shippingEvents)
     }
 
+    suspend fun readInShipmentData(data: String) {
+        pause = true
+        eventsMutex.withLock {
+            val parts = data.split(",")
+            val statusString = parts[0]
+            val status = ShippingEventType.from(statusString)
+            val id = parts[1]
+            val timestamp = parts[2].toLong()
+            val otherInfo = if (parts.size > 3) parts[3] else null
+
+            val newEvent = ShippingEvent(status, id, timestamp, otherInfo)
+            if (currentIndex >= events.size) {
+                events.add(newEvent)
+            } else {
+                events.add(currentIndex, newEvent)
+            }
+            pause = false
+        }
+    }
+
     suspend fun runSimulation() {
         loadShipmentData()
-        events.forEach { event ->
-            var shipment = findShipmentById(event.shipmentID)
-            var isNewShipment = false
-            val strategy = strategyPicker5000(event.type)
-            if (shipment == null) {
-                // error check for if shipment hasn't been created but trying to modify?
-                shipment = Shipment(event.shipmentID)
-                addShipment(shipment)
-                isNewShipment = true
+        if (eventsMutex.tryLock()) {
+            try {
+                while (true) {
+                    if (pause) {
+                        eventsMutex.unlock()
+                        delay(500)
+                        while (!eventsMutex.tryLock()) {
+                            delay(500)
+                        }
+                        if (currentIndex >= events.size) break
+                    }
+                    val event = events[currentIndex]
+                    var shipment = findShipmentById(event.shipmentID)
+                    var isNewShipment = false
+                    val strategy = strategyPicker5000(event.type)
+                    if (shipment == null) {
+                        // error check for if shipment hasn't been created but trying to modify?
+                        shipment = Shipment(event.shipmentID)
+                        addShipment(shipment)
+                        isNewShipment = true
+                    }
+                    if (!isNewShipment) {
+                        delay(1000L)
+                    }
+                    strategy.processUpdate(shipment, event)
+                    if (currentIndex < events.size - 1) {
+                        currentIndex++
+                    }
+                }
+            } finally {
+                if (eventsMutex.isLocked) {
+                    eventsMutex.unlock()
+                }
+
             }
-            if (!isNewShipment) {
-                delay(1000L)
-            }
-            strategy.processUpdate(shipment, event)
         }
     }
 }
