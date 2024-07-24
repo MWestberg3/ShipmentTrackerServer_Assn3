@@ -77,6 +77,7 @@ class TrackingSimulator private constructor(){
     suspend fun readInShipmentData(data: String) {
         pause = true
         eventsMutex.withLock {
+            // TODO: error handling for invalid input data i.e. including a shipment type but status is not CREATED
             val parts = data.split(",")
             val statusString = parts[0]
             val status = ShippingEventType.from(statusString)
