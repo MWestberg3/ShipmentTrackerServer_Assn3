@@ -13,7 +13,7 @@ abstract class Shipment(
         private set
     var notes: MutableList<String> = mutableListOf()
         private set
-    var expectedDeliveryDate: Long? = null
+    open var expectedDeliveryDate: Long? = null
     var currentLocation: String = "unknown"
     var observers: MutableList<ShipmentObserver> = mutableListOf()
 
