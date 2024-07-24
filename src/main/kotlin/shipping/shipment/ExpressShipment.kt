@@ -17,6 +17,7 @@ class ExpressShipment(id: String): Shipment(id) {
                         addNote("An express shipment was updated to include a delivery date that is more than 3 days from creation date")
                     }
                 }
+                notifyObservers()
                 value
             } else {
                 null
