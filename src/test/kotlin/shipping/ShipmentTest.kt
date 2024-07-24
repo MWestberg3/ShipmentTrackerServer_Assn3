@@ -3,12 +3,13 @@ package shipping
 import ShippingEvents.ShippingEventType
 import api.ShipmentObserver
 import org.junit.jupiter.api.Assertions.*
-import shipping.shipment.Shipment
+import org.junit.jupiter.api.DisplayNameGenerator.Standard
+import shipping.shipment.*
 
 class ShipmentTest {
     @org.junit.jupiter.api.Test
     fun testShipmentCreation() {
-        val shipment = Shipment("123")
+        val shipment = StandardShipment("123")
         assertEquals("123", shipment.id)
         assertEquals(ShippingEventType.CREATED, shipment.status)
         assertEquals("unknown", shipment.currentLocation)
@@ -17,7 +18,7 @@ class ShipmentTest {
 
     @org.junit.jupiter.api.Test
     fun testAddNote() {
-        val shipment = Shipment("123")
+        val shipment = OvernightShipment("123")
         shipment.addNote("note1")
         shipment.addNote("note2")
         shipment.addNote("note3")
@@ -27,7 +28,7 @@ class ShipmentTest {
 
     @org.junit.jupiter.api.Test
     fun testAddUpdate() {
-        val shipment = Shipment("123")
+        val shipment = ExpressShipment("123")
         val update = ShippingUpdate(ShippingEventType.CREATED, ShippingEventType.CANCELLED, 123456789)
         shipment.addUpdate(update)
         assertEquals(1, shipment.shippingUpdateHistory.size)
@@ -36,7 +37,7 @@ class ShipmentTest {
 
     @org.junit.jupiter.api.Test
     fun testRegisterObserver() {
-        val shipment = Shipment("123")
+        val shipment = BulkShipment("123")
         val observer = FalseObserver()
         shipment.registerObserver(observer)
         assertEquals(1, shipment.observers.size)
@@ -45,7 +46,7 @@ class ShipmentTest {
 
     @org.junit.jupiter.api.Test
     fun testRemoveObserver() {
-        val shipment = Shipment("123")
+        val shipment = StandardShipment("123")
         val observer = FalseObserver()
         shipment.registerObserver(observer)
         assertEquals(1, shipment.observers.size)

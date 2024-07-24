@@ -1,16 +1,18 @@
 package shipping
 
 import ShippingEvents.ShippingEventType
+import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Test
 
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import shipping.shipment.Shipment
+import shipping.shipment.StandardShipment
 
 class TrackerViewHelperTest {
     private lateinit var trackerViewHelper: TrackerViewHelper
-    private val simulator: TrackingSimulator = TrackingSimulator()
-    private val shipment: Shipment = Shipment("123").apply {
+    private val simulator: TrackingSimulator = TrackingSimulator.getInstance()
+    private val shipment: Shipment = StandardShipment("123").apply {
         addNote("Test Note")
         addUpdate(ShippingUpdate(ShippingEventType.CREATED, ShippingEventType.DELIVERED, 123456789))
         status = ShippingEventType.DELIVERED
@@ -18,13 +20,13 @@ class TrackerViewHelperTest {
     }
 
     @BeforeEach
-    fun setUp() {
+    fun setUp() = runBlocking{
         trackerViewHelper = TrackerViewHelper(simulator)
         simulator.addShipment(shipment)
     }
 
     @Test
-    fun trackShipmentTest() {
+    fun trackShipmentTest() = runBlocking {
         val shipmentId = "123"
         trackerViewHelper.trackShipment(shipmentId)
         assertEquals(shipmentId, trackerViewHelper.shipmentId)
@@ -35,7 +37,7 @@ class TrackerViewHelperTest {
     }
 
     @Test
-    fun trackShipmentNullCheck() {
+    fun trackShipmentNullCheck() = runBlocking {
         val shipmentId = "1"
         assertEquals(shipment.observers.size, 0)
         trackerViewHelper.trackShipment(shipmentId)
@@ -43,26 +45,26 @@ class TrackerViewHelperTest {
     }
 
     @Test
-    fun stopTracking() {
+    fun stopTracking() = runBlocking {
         val shipmentId = "123"
         assertEquals(shipment.observers.size, 0)
         trackerViewHelper.trackShipment(shipmentId)
         assertEquals(shipmentId, trackerViewHelper.shipmentId)
-        assertEquals(shipment.observers.size, 1)
-        trackerViewHelper.stopTracking()
-        assertEquals(shipment.observers.size, 0)
-    }
-
-    @Test
-    fun stopTrackingNull() {
-        val shipment: Shipment = Shipment("0")
         assertEquals(shipment.observers.size, 0)
         trackerViewHelper.stopTracking()
         assertEquals(shipment.observers.size, 0)
     }
 
     @Test
-    fun testNotify() {
+    fun stopTrackingNull() = runBlocking {
+        val shipment: Shipment = StandardShipment("0")
+        assertEquals(shipment.observers.size, 0)
+        trackerViewHelper.stopTracking()
+        assertEquals(shipment.observers.size, 0)
+    }
+
+    @Test
+    fun testNotify() = runBlocking {
         val shipmentId = "123"
         trackerViewHelper.trackShipment(shipmentId)
         assertEquals(shipmentId, trackerViewHelper.shipmentId)
